@@ -1,6 +1,6 @@
-# Magic Blocks
+# Crazy Blocks
 
-Magic Blocks is an application that allows user to create, play with and export block diagrams.
+Crazy Blocks is an application that allows user to create, play with and export block diagrams.
 
 ## Features
 
