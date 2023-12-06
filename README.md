@@ -11,6 +11,14 @@ Crazy Blocks is an application that allows user to create, play with and export 
 
 ## Technologies Used
 
+**Client:** Next.js, TailwindCSS
+
 ### Prerequisites
 
+**Node.js** is required to run this application.
+
 ### Usage
+
+```
+npm run dev
+```
