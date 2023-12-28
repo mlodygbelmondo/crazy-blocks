@@ -8,7 +8,7 @@ const ClearAllBlocks = () => {
 
   return (
     <BlockIconContainer onClick={onClick}>
-      <FaRegTrashAlt className="text-2xl" />
+      <FaRegTrashAlt className="text-xl" />
       Clear
     </BlockIconContainer>
   );
