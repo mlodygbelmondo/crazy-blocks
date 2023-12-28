@@ -1,4 +1,6 @@
 import Image from "next/image";
+import { MdKeyboardVoice } from "react-icons/md";
+import { MdInfo } from "react-icons/md";
 
 const Navbar = () => {
   return (
@@ -38,14 +40,21 @@ const Navbar = () => {
         </div>
       </div>
       <div className="navbar-center">
-        <a className="btn btn-ghost text-xl flex ">
+        <a className="btn btn-ghost text-base flex ">
           <div className="rounded-full overflow-hidden">
-            <Image src="/logo.jpeg" height={48} width={48} alt="Logo" />
-          </div>{" "}
+            <Image src="/logo.jpeg" height={32} width={32} alt="Logo" />
+          </div>
           Crazy Blocks
         </a>
       </div>
-      <div className="navbar-end"></div>
+      <div className="navbar-end flex items-center gap-4 text-lg pr-3">
+        <button>
+          <MdInfo className="text-gray-100" />
+        </button>
+        <button>
+          <MdKeyboardVoice className="text-gray-100" />
+        </button>
+      </div>
     </div>
   );
 };

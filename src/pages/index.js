@@ -1,14 +1,17 @@
 import Image from "next/image";
 import { Inter } from "next/font/google";
 import Layout from "./layout";
+import BlocksBarContainer from "@/components/BlocksBar/BlocksBarContainer";
+import ChartContainer from "@/components/ChartContainer";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export default function Home() {
   return (
-    <main
-      className={`flex min-h-screen flex-col bg-white items-center justify-between p-24 ${inter.className}`}
-    ></main>
+    <main className={`flex h-full bg-white text-black ${inter.className}`}>
+      <BlocksBarContainer />
+      <ChartContainer />
+    </main>
   );
 }
 

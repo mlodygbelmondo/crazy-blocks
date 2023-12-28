@@ -2,9 +2,9 @@ import Navbar from "@/components/Navbar";
 
 const Layout = ({ children }) => {
   return (
-    <div>
+    <div className="h-screen">
       <Navbar />
-      <div>{children}</div>
+      <div className="h-[calc(100%-64px)]">{children}</div>
     </div>
   );
 };
