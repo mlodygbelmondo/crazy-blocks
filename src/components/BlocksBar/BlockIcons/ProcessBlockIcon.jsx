@@ -1,9 +1,10 @@
 import BlockIconContainer from "./BlockIconContainer";
 
-const ProcessBlockIcon = () => {
-  const onClick = () => {
-    console.log("StartBlockIcon clicked");
-  };
+const ProcessBlockIcon = ({ createNewNode }) => {
+  const onClick = () =>
+    createNewNode({
+      type: "processBlock",
+    });
 
   return (
     <BlockIconContainer onClick={onClick}>

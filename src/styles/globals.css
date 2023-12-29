@@ -22,3 +22,24 @@ body {
     )
     rgb(var(--background-start-rgb));
 }
+
+.diamond {
+  position: relative;
+  left: 1px;
+  top: 1px;
+  background: #fff;
+  height: 90px;
+  text-align: center;
+  width: 90px;
+}
+.diamond-background {
+  background: #000;
+  height: 92px;
+  text-align: center;
+  transform: rotate(45deg);
+  width: 92px;
+}
+
+.react-flow__panel.react-flow__attribution.bottom.right {
+  display: none;
+}

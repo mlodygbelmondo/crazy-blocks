@@ -1,12 +1,9 @@
 import BlocksBar from "./BlocksBar";
 
-const BlocksBarContainer = ({ clearNodesAndEdges, createNewNode }) => {
+const BlocksBarContainer = () => {
   return (
-    <div className="h-full p-1 w-20">
-      <BlocksBar
-        clearNodesAndEdges={clearNodesAndEdges}
-        createNewNode={createNewNode}
-      />
+    <div className="fixed z-10 h-full p-1 w-20">
+      <BlocksBar />
     </div>
   );
 };
