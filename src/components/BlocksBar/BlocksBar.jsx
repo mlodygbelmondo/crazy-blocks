@@ -6,15 +6,15 @@ import EndBlockIcon from "./BlockIcons/EndBlockIcon";
 import ProcessBlockIcon from "./BlockIcons/ProcessBlockIcon";
 import StartBlockIcon from "./BlockIcons/StartBlockIcon";
 
-const BlocksBar = () => {
+const BlocksBar = ({ clearNodesAndEdges, createNewNode }) => {
   return (
     <div className="border-[1.5px] py-1 border-black rounded flex flex-col gap-4">
-      <StartBlockIcon />
+      <StartBlockIcon createNewNode={createNewNode} />
       <DataBlockIcon />
       <ProcessBlockIcon />
       <DecisionBlockIcon />
-      <EndBlockIcon />
-      <ClearAllBlocks />
+      <EndBlockIcon createNewNode={createNewNode} />
+      <ClearAllBlocks clearNodesAndEdges={clearNodesAndEdges} />
     </div>
   );
 };

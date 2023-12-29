@@ -1,9 +1,13 @@
+import { BLOCK_STYLES } from "@/consts/block-styles";
 import BlockIconContainer from "./BlockIconContainer";
 
-const EndBlockIcon = () => {
-  const onClick = () => {
-    console.log("EndBlockIcon clicked");
-  };
+const EndBlockIcon = ({ createNewNode }) => {
+  const onClick = () =>
+    createNewNode({
+      type: "output",
+      style: BLOCK_STYLES.START_OR_END,
+      data: { label: "End" },
+    });
 
   return (
     <BlockIconContainer onClick={onClick}>

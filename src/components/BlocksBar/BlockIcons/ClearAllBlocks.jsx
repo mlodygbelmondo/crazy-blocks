@@ -1,13 +1,9 @@
 import BlockIconContainer from "./BlockIconContainer";
 import { FaRegTrashAlt } from "react-icons/fa";
 
-const ClearAllBlocks = () => {
-  const onClick = () => {
-    console.log("Open modal with clear confirmation");
-  };
-
+const ClearAllBlocks = ({ clearNodesAndEdges }) => {
   return (
-    <BlockIconContainer onClick={onClick}>
+    <BlockIconContainer onClick={clearNodesAndEdges}>
       <FaRegTrashAlt className="text-xl" />
       Clear
     </BlockIconContainer>

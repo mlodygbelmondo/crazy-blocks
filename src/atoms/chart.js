@@ -1,6 +1,6 @@
 import { atom } from "jotai";
 
-const blocksAtom = atom([]);
-const activeBranchAtom = atom(null);
+const nodesAtom = atom([]);
+const edgesAtom = atom([]);
 
-export { blocksAtom, activeBranchAtom };
+export { nodesAtom, edgesAtom };

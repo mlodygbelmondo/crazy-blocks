@@ -1,11 +1,11 @@
 const BlockIconContainer = ({ children, onClick }) => {
   return (
-    <div
+    <button
       onClick={onClick}
       className="flex flex-col items-center font-medium gap-0.5 text-[11px] justify-center"
     >
       {...children}
-    </div>
+    </button>
   );
 };
 export default BlockIconContainer;
