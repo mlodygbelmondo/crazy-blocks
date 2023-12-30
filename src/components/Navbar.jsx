@@ -1,9 +1,10 @@
+import jsPDF from "jspdf";
 import Image from "next/image";
 import { MdKeyboardVoice } from "react-icons/md";
 import { MdInfo } from "react-icons/md";
 import generatePDF from "react-to-pdf";
 const options = {
-  filename: "using-function.pdf",
+  filename: "crazy-blocks.pdf",
   page: {
     margin: 20,
   },
