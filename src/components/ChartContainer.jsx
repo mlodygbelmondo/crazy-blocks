@@ -39,7 +39,7 @@ const ChartContainer = () => {
   );
 
   return (
-    <div className="h-full w-full">
+    <div className="h-full w-full" id="chart-container">
       <ReactFlow
         nodes={nodes}
         edges={edges}

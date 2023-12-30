@@ -1,6 +1,17 @@
 import Image from "next/image";
 import { MdKeyboardVoice } from "react-icons/md";
 import { MdInfo } from "react-icons/md";
+import generatePDF from "react-to-pdf";
+const options = {
+  filename: "using-function.pdf",
+  page: {
+    margin: 20,
+  },
+};
+
+const getTargetElement = () => document.getElementById("chart-container");
+
+const downloadPdf = () => generatePDF(getTargetElement, options);
 
 const Navbar = () => {
   return (
@@ -34,7 +45,7 @@ const Navbar = () => {
               <a>Portfolio</a>
             </li>
             <li>
-              <a>About</a>
+              <a onClick={downloadPdf}>Generate PDF</a>
             </li>
           </ul>
         </div>
