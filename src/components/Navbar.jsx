@@ -1,20 +1,55 @@
+import axios from "axios";
+import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import Image from "next/image";
 import { MdKeyboardVoice } from "react-icons/md";
 import { MdInfo } from "react-icons/md";
 import generatePDF from "react-to-pdf";
-const options = {
-  filename: "crazy-blocks.pdf",
-  page: {
-    margin: 20,
-  },
-};
+// const options = {
+//   filename: "crazy-blocks.pdf",
+//   page: {
+//     margin: 20,
+//   },
+// };
 
-const getTargetElement = () => document.getElementById("chart-container");
+// const getTargetElement = () => document.getElementById("chart-container");
 
-const downloadPdf = () => generatePDF(getTargetElement, options);
+// const downloadPdf = () => generatePDF(getTargetElement, options);
 
 const Navbar = () => {
+  // const printDocument = () => {
+  //   const input = document.getElementById("chart-container");
+  //   console.log(input);
+  //   html2canvas(input).then((canvas) => {
+  //     const imgData = canvas.toDataURL("image/png");
+  //     document.write('<img src="' + imgData + '"/>');
+  //     const pdf = new jsPDF();
+  //     pdf.addImage(imgData, "JPEG", 0, 0);
+  //     pdf.save("download.pdf");
+  //   });
+  // };
+
+  const savePDF = async () => {
+    // @todo add here saving node parameters to database
+
+    const res = axios.get("http://localhost:3000/api/generate-pdf", {
+      responseType: "arraybuffer",
+      headers: {
+        Accept: "application/pdf",
+      },
+    });
+
+    return res
+      .then((response) => {
+        const blob = new Blob([response.data], { type: "application/pdf" });
+        const link = document.createElement("a");
+        link.href = window.URL.createObjectURL(blob);
+        link.download = `crazy-blocks.pdf`;
+        link.click();
+      })
+      .catch((err) => console.log(err));
+  };
+
   return (
     <div className="navbar bg-base-100">
       <div className="navbar-start">
@@ -46,7 +81,7 @@ const Navbar = () => {
               <a>Portfolio</a>
             </li>
             <li>
-              <a onClick={downloadPdf}>Generate PDF</a>
+              <a onClick={savePDF}>Generate PDF</a>
             </li>
           </ul>
         </div>

@@ -1,10 +1,14 @@
-import { inputValuesAtom } from "@/atoms/chart";
+import { currentNodeIdAtom, inputValuesAtom } from "@/atoms/chart";
 import { useAtom } from "jotai";
 import { useCallback } from "react";
 import { Handle, Position } from "reactflow";
+import { getHandleStyles } from "./helpers/getHandleStyles";
+import { BiSolidRightArrow } from "react-icons/bi";
+import { BLOCK_ARROW_STYLES } from "@/consts/block-arrow-styles";
 
 function ProcessBlock({ data, isConnectable }) {
   const [inputValues, setInputValues] = useAtom(inputValuesAtom);
+  const [currentNodeId] = useAtom(currentNodeIdAtom);
 
   const onChange = useCallback(
     (e) => {
@@ -13,8 +17,10 @@ function ProcessBlock({ data, isConnectable }) {
     [setInputValues, data.id]
   );
 
+  const isActive = currentNodeId === data.id;
+
   return (
-    <div className="data-block">
+    <div className="process-block relative">
       <div className="flex items-center justify-center bg-white border-black border">
         <textarea
           id="text"
@@ -30,18 +36,19 @@ function ProcessBlock({ data, isConnectable }) {
         type="target"
         position={Position.Top}
         isConnectable={isConnectable}
-        style={{
+        style={getHandleStyles({
           top: "-2.5px",
-        }}
+        })}
       />
       <Handle
         type="source"
         position={Position.Bottom}
         isConnectable={isConnectable}
-        style={{
+        style={getHandleStyles({
           bottom: "-2.5px",
-        }}
+        })}
       />
+      {isActive && <BiSolidRightArrow className={BLOCK_ARROW_STYLES} />}
     </div>
   );
 }

@@ -3,4 +3,4 @@ export const DEFAULT_POSITION = {
   y: 30,
 };
 
-export const VERTICAL_GAP_BETWEEN_NODES = 70;
+export const VERTICAL_GAP_BETWEEN_NODES = 100;

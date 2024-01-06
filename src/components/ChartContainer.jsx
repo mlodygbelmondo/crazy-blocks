@@ -11,6 +11,7 @@ import "reactflow/dist/style.css";
 import DecisionBlock from "./Blocks/DecisionBlock";
 import DataBlock from "./Blocks/DataBlock";
 import ProcessBlock from "./Blocks/ProcessBlock";
+import StartEndBlock from "./Blocks/StartEndBlock";
 
 const ChartContainer = () => {
   const [nodes, setNodes] = useAtom(nodesAtom);
@@ -34,22 +35,24 @@ const ChartContainer = () => {
       decisionBlock: DecisionBlock,
       dataBlock: DataBlock,
       processBlock: ProcessBlock,
+      startEndBlock: StartEndBlock,
     }),
     []
   );
 
   return (
-    <div className="h-full w-full" id="chart-container">
-      <ReactFlow
-        nodes={nodes}
-        edges={edges}
-        onNodesChange={onNodesChange}
-        onEdgesChange={onEdgesChange}
-        onConnect={onConnect}
-        nodeTypes={nodeTypes}
-      >
-        <Controls position="bottom-right" />
-      </ReactFlow>
+    <div className="h-full w-full">
+      <div className="h-full w-full">
+        <ReactFlow
+          nodes={nodes}
+          edges={edges}
+          onNodesChange={onNodesChange}
+          onEdgesChange={onEdgesChange}
+          onConnect={onConnect}
+          nodeTypes={nodeTypes}
+        ></ReactFlow>
+      </div>
+      <Controls className="controls" position="bottom-right" />
     </div>
   );
 };

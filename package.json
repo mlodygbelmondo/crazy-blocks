@@ -10,14 +10,18 @@
   },
   "dependencies": {
     "@paralleldrive/cuid2": "^2.2.2",
+    "axios": "^1.6.5",
+    "html2canvas": "^1.4.1",
     "jotai": "^2.6.0",
     "jspdf": "^2.5.1",
     "next": "14.0.3",
+    "puppeteer": "^21.7.0",
     "react": "^18",
     "react-dom": "^18",
     "react-icons": "^4.12.0",
     "react-to-pdf": "^1.0.1",
-    "reactflow": "^11.10.1"
+    "reactflow": "^11.10.1",
+    "tailwind-merge": "^2.2.0"
   },
   "devDependencies": {
     "autoprefixer": "^10.0.1",
