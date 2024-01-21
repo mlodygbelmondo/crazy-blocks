@@ -1,4 +1,5 @@
 import "@/styles/globals.css";
+import { Toaster } from "react-hot-toast";
 import { ReactFlowProvider } from "reactflow";
 
 export default function App({ Component, pageProps }) {
@@ -7,6 +8,7 @@ export default function App({ Component, pageProps }) {
   return (
     <ReactFlowProvider>
       {getLayout(<Component {...pageProps} />)}
+      <Toaster />
     </ReactFlowProvider>
   );
 }

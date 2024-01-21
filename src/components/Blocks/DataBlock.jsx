@@ -22,11 +22,13 @@ function DataBlock({ data, isConnectable }) {
   return (
     <div className="data-block relative">
       <div className="-skew-x-[20deg] flex items-center justify-center bg-white border-black border">
+        <div className="h-full w-full skew-x-[20deg] absolute right-8 pb-2 flex items-center">
+          {isActive && <BiSolidRightArrow className="text-lg" />}
+        </div>
         <textarea
           id="text"
           name="text"
           rows={4}
-          maxLength={45}
           value={inputValues[data.id]}
           onChange={onChange}
           className="resize-none cursor-grab skew-x-[20deg] py-1 bg-transparent text-center focus:outline-none w-3/4 mt-[1px] mx-2 text-2xs relative"
@@ -48,7 +50,6 @@ function DataBlock({ data, isConnectable }) {
           bottom: "-2.5px",
         })}
       />
-      {isActive && <BiSolidRightArrow className={BLOCK_ARROW_STYLES} />}
     </div>
   );
 }

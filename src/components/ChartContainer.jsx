@@ -1,4 +1,4 @@
-import { edgesAtom, nodesAtom } from "@/atoms/chart";
+import { edgesAtom, isAppRunningAtom, nodesAtom } from "@/atoms/chart";
 import { useAtom } from "jotai";
 import { useCallback, useMemo } from "react";
 import ReactFlow, {
@@ -12,8 +12,10 @@ import DecisionBlock from "./Blocks/DecisionBlock";
 import DataBlock from "./Blocks/DataBlock";
 import ProcessBlock from "./Blocks/ProcessBlock";
 import StartEndBlock from "./Blocks/StartEndBlock";
+import PlayerControls from "./Player/PlayerControls";
 
 const ChartContainer = () => {
+  const [isAppRunning] = useAtom(isAppRunningAtom);
   const [nodes, setNodes] = useAtom(nodesAtom);
   const [edges, setEdges] = useAtom(edgesAtom);
 
@@ -41,7 +43,7 @@ const ChartContainer = () => {
   );
 
   return (
-    <div className="h-full w-full">
+    <div className="h-full w-full relative">
       <div className="h-full w-full">
         <ReactFlow
           nodes={nodes}
@@ -50,9 +52,13 @@ const ChartContainer = () => {
           onEdgesChange={onEdgesChange}
           onConnect={onConnect}
           nodeTypes={nodeTypes}
+          elementsSelectable={!isAppRunning}
+          nodesDraggable={!isAppRunning}
+          nodesConnectable={!isAppRunning}
         ></ReactFlow>
       </div>
       <Controls className="controls" position="bottom-right" />
+      <PlayerControls />
     </div>
   );
 };

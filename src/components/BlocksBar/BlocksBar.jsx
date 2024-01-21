@@ -1,15 +1,15 @@
 import { useAtom } from "jotai";
-import BlockIcon from "./BlockIcons/BlockIconContainer";
 import ClearAllBlocks from "./BlockIcons/ClearAllBlocks";
 import DataBlockIcon from "./BlockIcons/DataBlockIcon";
 import DecisionBlockIcon from "./BlockIcons/DecisionBlockIcon";
 import EndBlockIcon from "./BlockIcons/EndBlockIcon";
 import ProcessBlockIcon from "./BlockIcons/ProcessBlockIcon";
 import StartBlockIcon from "./BlockIcons/StartBlockIcon";
-import { edgesAtom, nodesAtom } from "@/atoms/chart";
+import { edgesAtom, isAppRunningAtom, nodesAtom } from "@/atoms/chart";
 import { useCallback } from "react";
 import { DEFAULT_POSITION, VERTICAL_GAP_BETWEEN_NODES } from "@/consts/chart";
 import { createId } from "@paralleldrive/cuid2";
+import toast from "react-hot-toast";
 
 const getVerticalGapBetweenNodes = (lastNodeType) => {
   if (!lastNodeType) return VERTICAL_GAP_BETWEEN_NODES;
@@ -50,16 +50,20 @@ const getHorizontalGapBetweenNodes = (lastNodeType, currentNodeType) => {
 };
 
 const BlocksBar = () => {
+  const [isAppRunning] = useAtom(isAppRunningAtom);
   const [nodes, setNodes] = useAtom(nodesAtom);
   const [, setEdges] = useAtom(edgesAtom);
 
   const clearNodesAndEdges = useCallback(() => {
+    if (isAppRunning) return toast.error("App is running!");
+
     setNodes([]);
     setEdges([]);
-  }, [setNodes, setEdges]);
+  }, [setNodes, setEdges, isAppRunning]);
 
   const createNewNode = useCallback(
     (params) => {
+      if (isAppRunning) return toast.error("App is running!");
       const lastNode = nodes[nodes.length - 1];
 
       const isDecisionBlock = params.type === "decisionBlock";
@@ -94,7 +98,7 @@ const BlocksBar = () => {
 
       setNodes((nds) => [...nds, newNode]);
     },
-    [setNodes, nodes]
+    [setNodes, nodes, isAppRunning]
   );
   return (
     <div

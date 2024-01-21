@@ -24,6 +24,9 @@ function DecisionBlock({ data, isConnectable }) {
     <div className="decision-block relative">
       <div className="diamond-background">
         <div className="diamond flex items-center justify-center">
+          <div className="-rotate-[45deg] h-full w-full absolute right-9 top-9  flex items-center">
+            {isActive && <BiSolidRightArrow className="text-lg" />}
+          </div>
           <textarea
             id="text"
             name="text"
@@ -54,6 +57,8 @@ function DecisionBlock({ data, isConnectable }) {
           marginLeft: "3px",
         })}
       />
+      <p className="absolute text-xs -right-8 top-3">True</p>
+      <p className="absolute text-xs -left-8 top-3">False</p>
       <Handle
         type="source"
         position={Position.Right}
@@ -64,11 +69,6 @@ function DecisionBlock({ data, isConnectable }) {
           right: "-18.5px",
         })}
       />
-      {isActive && (
-        <BiSolidRightArrow
-          className={twMerge(BLOCK_ARROW_STYLES, "-left-12")}
-        />
-      )}
     </div>
   );
 }

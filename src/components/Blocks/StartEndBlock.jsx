@@ -24,8 +24,11 @@ function StartEndBlock({ data, isConnectable }) {
 
   return (
     <div className="start-end-block relative">
-      <div className="flex h-10 w-36 items-center text-xs rounded-full justify-center bg-white border-black border">
+      <div className="flex h-10 w-36 relative items-center text-xs rounded-full justify-center bg-white border-black border">
         {data.label}
+        <div className="h-full w-full absolute right-8 pb-1 flex items-center">
+          {isActive && <BiSolidRightArrow className="text-lg" />}
+        </div>
       </div>
       <Handle
         type={handleType}
@@ -33,7 +36,6 @@ function StartEndBlock({ data, isConnectable }) {
         isConnectable={isConnectable}
         style={handleStyle}
       />
-      {isActive && <BiSolidRightArrow className={BLOCK_ARROW_STYLES} />}
     </div>
   );
 }

@@ -31,7 +31,7 @@ const Navbar = () => {
 
   const savePDF = async () => {
     // @todo add here saving node parameters to database
-
+    // @todo localhost or smth to env
     const res = axios.get("http://localhost:3000/api/generate-pdf", {
       responseType: "arraybuffer",
       headers: {

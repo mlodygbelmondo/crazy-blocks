@@ -22,6 +22,9 @@ function ProcessBlock({ data, isConnectable }) {
   return (
     <div className="process-block relative">
       <div className="flex items-center justify-center bg-white border-black border">
+        <div className="h-full w-full absolute right-8 pb-1 flex items-center">
+          {isActive && <BiSolidRightArrow className="text-lg" />}
+        </div>
         <textarea
           id="text"
           name="text"
@@ -48,7 +51,6 @@ function ProcessBlock({ data, isConnectable }) {
           bottom: "-2.5px",
         })}
       />
-      {isActive && <BiSolidRightArrow className={BLOCK_ARROW_STYLES} />}
     </div>
   );
 }
