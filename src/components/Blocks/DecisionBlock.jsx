@@ -57,8 +57,8 @@ function DecisionBlock({ data, isConnectable }) {
           marginLeft: "3px",
         })}
       />
-      <p className="absolute text-xs -right-8 top-3">True</p>
-      <p className="absolute text-xs -left-8 top-3">False</p>
+      <p className="absolute text-xs -right-8 top-3">False</p>
+      <p className="absolute text-xs -left-8 top-3">True</p>
       <Handle
         type="source"
         position={Position.Right}

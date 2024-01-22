@@ -11,7 +11,7 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 
 const PlayerControls = () => {
-  const [, setIsAppRunning] = useAtom(isAppRunningAtom);
+  const [isAppRunning, setIsAppRunning] = useAtom(isAppRunningAtom);
   const [variables, setVariables] = useAtom(variablesAtom);
   const [isPlayingByStep, setIsPlayingByStep] = useState(false);
 
@@ -20,10 +20,45 @@ const PlayerControls = () => {
   const [currentNodeId, setCurrentNodeId] = useAtom(currentNodeIdAtom);
   const [edges] = useAtom(edgesAtom);
 
-  function playByStep() {
+  function play() {
+    setVariables({});
+    setIsAppRunning(true);
+
+    let passedNodeId = "";
+
     try {
-      setIsPlayingByStep(true);
-      setIsAppRunning(true);
+      const startBlockAmount = nodes.filter(
+        (node) => node.type === "startEndBlock" && node?.data?.label === "Start"
+      ).length;
+      if (startBlockAmount > 1) {
+        throw new Error("There should be only one start block!");
+      }
+
+      const startBlock = nodes.find(
+        (node) => node.type === "startEndBlock" && node?.data?.label === "Start"
+      );
+      if (!startBlock) {
+        throw new Error("There is no start block!");
+      }
+
+      passedNodeId = startBlock.id;
+      setCurrentNodeId(passedNodeId);
+    } catch (e) {
+      toast.error(e?.message ?? e);
+      stopPlaying();
+    }
+
+    setTimeout(() => {
+      proceedToNextStep(passedNodeId);
+    }, 1000);
+  }
+
+  function playByStep() {
+    setVariables({});
+    setIsPlayingByStep(true);
+    setIsAppRunning(true);
+
+    try {
       const startBlockAmount = nodes.filter(
         (node) => node.type === "startEndBlock" && node?.data?.label === "Start"
       ).length;
@@ -45,75 +80,100 @@ const PlayerControls = () => {
     }
   }
 
-  function executeBlockAction() {
-    try {
-      const block = nodes.find((node) => node.id === currentNodeId);
-      if (!block) {
-        throw new Error("Current block is not found!");
+  function executeBlockAction(passedNodeId) {
+    const block = nodes.find((node) => node.id === passedNodeId);
+    if (!block) {
+      throw new Error("Current block is not found!");
+    }
+
+    if (block.type === "startEndBlock" && block?.data?.label === "Start") {
+      return;
+    }
+
+    const blockValue = inputValues[passedNodeId];
+    if (!blockValue) {
+      throw new Error("Block value is not found!");
+    }
+
+    const blockInstructions = blockValue
+      .replaceAll("\n", "")
+      .replaceAll(" ", "")
+      .split(";");
+
+    blockInstructions.pop();
+
+    switch (block.type) {
+      case "dataBlock": {
+        blockInstructions.forEach((instruction) => {
+          const [variable, value] = instruction.split("=");
+          setVariables((prev) => ({
+            ...prev,
+            [variable]: value ?? null,
+          }));
+        });
+        break;
       }
-
-      if (block.type === "startEndBlock") {
-        if (block.data.label === "Start") {
-          return;
-        } else {
-          stopPlaying();
-          return;
-        }
+      case "processBlock": {
+        break;
       }
-
-      const blockValue = inputValues[currentNodeId];
-      if (!blockValue) {
-        throw new Error("Block value is not found!");
+      case "decisionBlock": {
+        return true;
+        break;
       }
-
-      const blockInstructions = blockValue
-        .replaceAll("\n", "")
-        .replaceAll(" ", "")
-        .split(";");
-
-      blockInstructions.pop();
-
-      switch (block.type) {
-        case "dataBlock": {
-          blockInstructions.forEach((instruction) => {
-            console.log(instruction);
-            const [variable, value] = instruction.split("=");
-            setVariables((prev) => ({
-              ...prev,
-              [variable]: value ?? null,
-            }));
-          });
-          break;
-        }
-        case "processBlock": {
-          break;
-        }
-        case "decisionBlock": {
-          break;
-        }
-        default:
-          throw new Error("Block type is not found!");
-      }
-    } catch (e) {
-      toast.error(e?.message ?? e);
-      stopPlaying();
+      default:
+        throw new Error("Block type is not found!");
     }
   }
 
-  function proceedToNextStep() {
+  function proceedToNextStep(passedNodeId) {
     try {
-      executeBlockAction();
-
-      const currentNode = nodes.find((node) => node.id === currentNodeId);
+      const nodeIdToLookFor = passedNodeId || currentNodeId;
+      const currentNode = nodes.find((node) => node.id === nodeIdToLookFor);
       if (!currentNode) {
         throw new Error("Current block is not found!");
       }
 
+      if (
+        currentNode.type === "startEndBlock" &&
+        currentNode?.data?.label === "End"
+      ) {
+        return stopPlaying();
+      }
+
+      const value = executeBlockAction(nodeIdToLookFor);
+
       if (currentNode.type === "decisionBlock") {
+        let sourceHandle;
+        if (value) {
+          sourceHandle = "a";
+        } else {
+          sourceHandle = "b";
+        }
+
+        const currentEdge = edges.find(
+          (edge) =>
+            edge.source === nodeIdToLookFor &&
+            edge?.sourceHandle === sourceHandle
+        );
+        if (!currentEdge) {
+          throw new Error("Block is not connected!");
+        }
+
+        const nextNode = nodes.find((node) => node.id === currentEdge.target);
+        if (!nextNode) {
+          throw new Error("Block is not connected!");
+        }
+
+        setCurrentNodeId(nextNode.id);
+        if (!isPlayingByStep) {
+          setTimeout(() => {
+            proceedToNextStep(nextNode.id);
+          }, 1000);
+        }
         return;
       }
 
-      const currentEdge = edges.find((edge) => edge.source === currentNodeId);
+      const currentEdge = edges.find((edge) => edge.source === nodeIdToLookFor);
       if (!currentEdge) {
         throw new Error("Block is not connected!");
       }
@@ -124,6 +184,12 @@ const PlayerControls = () => {
       }
 
       setCurrentNodeId(nextNode.id);
+
+      if (!isPlayingByStep) {
+        setTimeout(() => {
+          proceedToNextStep(nextNode.id);
+        }, 1000);
+      }
     } catch (e) {
       toast.error(e?.message ?? e);
       stopPlaying();
@@ -134,12 +200,17 @@ const PlayerControls = () => {
     setIsPlayingByStep(false);
     setIsAppRunning(false);
     setCurrentNodeId("");
-    setVariables({});
+
+    let id = window.setTimeout(function () {}, 0);
+
+    while (id--) {
+      window.clearTimeout(id); // will do nothing if no timeout with id is present
+    }
   }
 
   return (
     <div className="absolute right-2 top-2 flex gap-2">
-      {isPlayingByStep ? (
+      {isAppRunning ? (
         <>
           <button
             onClick={stopPlaying}
@@ -147,16 +218,21 @@ const PlayerControls = () => {
           >
             Stop
           </button>
-          <button
-            onClick={proceedToNextStep}
-            className="border-[1.5px] text-sm border-black p-1 rounded-lg"
-          >
-            Next step
-          </button>
+          {isPlayingByStep && (
+            <button
+              onClick={() => proceedToNextStep()}
+              className="border-[1.5px] text-sm border-black p-1 rounded-lg"
+            >
+              Next step
+            </button>
+          )}
         </>
       ) : (
         <>
-          <button className="border-[1.5px] text-sm border-black p-1 rounded-lg">
+          <button
+            onClick={play}
+            className="border-[1.5px] text-sm border-black p-1 rounded-lg"
+          >
             Play
           </button>
           <button
