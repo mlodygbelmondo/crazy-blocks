@@ -31,7 +31,6 @@ function DecisionBlock({ data, isConnectable }) {
             id="text"
             name="text"
             rows={4}
-            maxLength={36}
             value={inputValues[data.id]}
             onChange={onChange}
             className="resize-none cursor-grab bg-transparent text-center focus:outline-none w-full mt-[1px] ml-[1px] px-1.5 text-2xs relative -rotate-[45deg]"

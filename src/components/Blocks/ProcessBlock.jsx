@@ -29,7 +29,6 @@ function ProcessBlock({ data, isConnectable }) {
           id="text"
           name="text"
           rows={4}
-          maxLength={45}
           value={inputValues[data.id]}
           onChange={onChange}
           className="resize-none cursor-grab bg-transparent text-center focus:outline-none w-3/4 mt-[1px] mx-2 text-2xs relative"

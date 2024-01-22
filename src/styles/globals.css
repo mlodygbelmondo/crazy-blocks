@@ -2,9 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-}
-
 @media (prefers-color-scheme: dark) {
   :root {
     --foreground-rgb: 255, 255, 255;
@@ -41,5 +38,9 @@ body {
 }
 
 .react-flow__panel.react-flow__attribution.bottom.right {
+  display: none;
+}
+
+input[type="file"] {
   display: none;
 }

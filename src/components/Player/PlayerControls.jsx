@@ -95,15 +95,14 @@ const PlayerControls = () => {
       throw new Error("Block value is not found!");
     }
 
-    const blockInstructions = blockValue
-      .replaceAll("\n", "")
-      .replaceAll(" ", "")
-      .split(";");
-
-    blockInstructions.pop();
-
     switch (block.type) {
       case "dataBlock": {
+        const blockInstructions = blockValue
+          .replaceAll("\n", "")
+          .replaceAll(" ", "")
+          .split(";");
+
+        blockInstructions.pop();
         blockInstructions.forEach((instruction) => {
           const [variable, value] = instruction.split("=");
           setVariables((prev) => ({
@@ -114,11 +113,123 @@ const PlayerControls = () => {
         break;
       }
       case "processBlock": {
+        const blockInstructions = blockValue.replaceAll("\n", "").split(";");
+
+        blockInstructions.pop();
+        blockInstructions.forEach((instruction) => {
+          if (instruction.includes("++")) {
+            const variable = instruction.slice(0, instruction.indexOf("++"));
+            setVariables((prev) => ({
+              ...prev,
+              [variable]: Number(prev[variable]) + 1,
+            }));
+            return;
+          }
+
+          if (instruction.includes("--")) {
+            const variable = instruction.slice(0, instruction.indexOf("--"));
+            setVariables((prev) => ({
+              ...prev,
+              [variable]: Number(prev[variable]) - 1,
+            }));
+            return;
+          }
+
+          if (instruction.includes("+=")) {
+            const [variable, value] = instruction.split("+=");
+            setVariables((prev) => ({
+              ...prev,
+              [variable]: Number(prev[variable]) + Number(value),
+            }));
+            return;
+          }
+
+          if (instruction.includes("-=")) {
+            const [variable, value] = instruction.split("-=");
+            setVariables((prev) => ({
+              ...prev,
+              [variable]: Number(prev[variable]) - Number(value),
+            }));
+            return;
+          }
+
+          if (instruction.includes("*=")) {
+            const [variable, value] = instruction.split("*=");
+            setVariables((prev) => ({
+              ...prev,
+              [variable]: Number(prev[variable]) * Number(value),
+            }));
+            return;
+          }
+
+          if (instruction.includes("/=")) {
+            const [variable, value] = instruction.split("/=");
+            setVariables((prev) => ({
+              ...prev,
+              [variable]: Number(prev[variable]) / Number(value),
+            }));
+            return;
+          }
+
+          if (instruction.includes("print")) {
+            return toast(instruction.slice(6), { icon: "📝", duration: 5000 });
+          }
+
+          const [variable, assignment] = instruction.split("=");
+
+          const words = assignment.split(" ");
+
+          const mappedWords = words.map((word) => {
+            if (word.includes("[")) {
+              const variableName = word.slice(0, word.indexOf("["));
+              const variableValue = variables[variableName];
+              if (!variableValue) {
+                throw new Error("Variable is not found!");
+              }
+              const variableIndex = word.charAt(word.indexOf("[") + 1);
+              return eval(`${variableValue}[${variableIndex}]`);
+            }
+
+            return variables[word] ?? word;
+          });
+
+          const value = eval(mappedWords.join(" "));
+
+          setVariables((prev) => ({
+            ...prev,
+            [variable.trim()]: value,
+          }));
+        });
         break;
       }
       case "decisionBlock": {
-        return true;
-        break;
+        const blockInstructions = blockValue.replaceAll("\n", "").split(";");
+
+        blockInstructions.pop();
+        if (blockInstructions.length !== 1) {
+          throw new Error("Decision block should have only one instruction!");
+        }
+
+        const instruction = blockInstructions[0];
+
+        const words = instruction.split(" ");
+
+        const mappedWords = words.map((word) => {
+          if (word.includes("[")) {
+            const variableName = word.slice(0, word.indexOf("["));
+            const variableValue = variables[variableName];
+            if (!variableValue) {
+              throw new Error("Variable is not found!");
+            }
+            const variableIndex = word.charAt(word.indexOf("[") + 1);
+            return eval(`${variableValue}[${variableIndex}]`);
+          }
+
+          return variables[word] ?? word;
+        });
+
+        const value = eval(mappedWords.join(" "));
+        return value;
       }
       default:
         throw new Error("Block type is not found!");

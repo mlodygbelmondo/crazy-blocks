@@ -1,4 +1,5 @@
 import puppeteer from "puppeteer";
+import { env } from "../../../next.config";
 
 export default async function handler(req, res) {
   const browser = await puppeteer.launch({
@@ -7,8 +8,7 @@ export default async function handler(req, res) {
 
   const page = await browser.newPage();
 
-  // @todo add custom url from env
-  const website_url = "http://localhost:3000/";
+  const website_url = `${env.NEXT_PUBLIC_SITE_URL}/pdf`;
 
   await page.goto(website_url, { waitUntil: "networkidle0" });
 
