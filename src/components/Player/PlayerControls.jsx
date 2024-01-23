@@ -320,7 +320,7 @@ const PlayerControls = () => {
   }
 
   return (
-    <div className="absolute right-2 top-2 flex gap-2">
+    <div className="absolute right-2 top-2 flex gap-2" id="player-controls">
       {isAppRunning ? (
         <>
           <button

@@ -6,7 +6,7 @@ const VariablesManager = () => {
   const [variables] = useAtom(variablesAtom);
 
   return (
-    <div className="absolute left-2 bottom-2">
+    <div className="absolute left-2 bottom-2" id="variables-manager">
       <Draggable>
         <div className="border cursor-grab bg-white min-h-[200px] min-w-[160px] border-black rounded p-2">
           <h2 className="text-sm font-medium mb-1">Variables Manager</h2>
