@@ -1,28 +1,62 @@
 import * as Dialog from "@radix-ui/react-dialog";
 import { Cross2Icon } from "@radix-ui/react-icons";
 import toast from "react-hot-toast";
+import { edgesAtom, inputValuesAtom, nodesAtom } from "@/atoms/chart";
+import { useAtom } from "jotai";
+import { useReactFlow } from "reactflow";
+import { useState } from "react";
 
 const LoadProject = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [file, setFile] = useState(null);
+  const [, setNodes] = useAtom(nodesAtom);
+  const [, setEdges] = useAtom(edgesAtom);
+  const [, setInputValues] = useAtom(inputValuesAtom);
+
+  const reactFlow = useReactFlow();
+
   const handleFileUpload = async (e) => {
     if (!e?.target?.files || !e?.target?.files[0]) {
       return;
     }
+
+    setFile(file);
 
     try {
       const file = e?.target?.files[0];
 
       const fileContent = await file.text();
 
-      const splittedEmployees = fileContent.split("\n");
+      const parsedFileContent = JSON.parse(fileContent);
 
-      // Removing the header
-      splittedEmployees.shift();
+      if (
+        !parsedFileContent?.nodes ||
+        !parsedFileContent?.edges ||
+        !parsedFileContent?.inputValues
+      ) {
+        throw new Error("Invalid file!");
+      }
+
+      setNodes(parsedFileContent?.nodes);
+      setEdges(parsedFileContent?.edges);
+      setInputValues(parsedFileContent?.inputValues);
+
+      setIsModalOpen(false);
+
+      toast.success("Project has been loaded!");
+      reactFlow.fitView();
     } catch (e) {
       return toast.error(e?.message ?? "File upload failed!");
     }
   };
+
+  const onOpenChange = (open) => {
+    setFile(null);
+    setIsModalOpen(open);
+  };
+
   return (
-    <Dialog.Root>
+    <Dialog.Root open={isModalOpen} onOpenChange={onOpenChange}>
       <Dialog.Trigger asChild>
         <li>
           <a>Load Project</a>

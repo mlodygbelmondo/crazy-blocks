@@ -20,7 +20,7 @@ const PlayerControls = () => {
   const [currentNodeId, setCurrentNodeId] = useAtom(currentNodeIdAtom);
   const [edges] = useAtom(edgesAtom);
 
-  function play() {
+  function play(inputValues, variables) {
     setVariables({});
     setIsAppRunning(true);
 
@@ -33,12 +33,24 @@ const PlayerControls = () => {
       if (startBlockAmount > 1) {
         throw new Error("There should be only one start block!");
       }
+      const endBlockAmount = nodes.filter(
+        (node) => node.type === "startEndBlock" && node?.data?.label === "End"
+      ).length;
+      if (endBlockAmount > 1) {
+        throw new Error("There should be only one end block!");
+      }
 
       const startBlock = nodes.find(
         (node) => node.type === "startEndBlock" && node?.data?.label === "Start"
       );
       if (!startBlock) {
         throw new Error("There is no start block!");
+      }
+      const endBlock = nodes.find(
+        (node) => node.type === "startEndBlock" && node?.data?.label === "End"
+      );
+      if (!endBlock) {
+        throw new Error("There is no end block!");
       }
 
       passedNodeId = startBlock.id;
@@ -49,7 +61,7 @@ const PlayerControls = () => {
     }
 
     setTimeout(() => {
-      proceedToNextStep(passedNodeId);
+      proceedToNextStep(inputValues, variables, passedNodeId);
     }, 1000);
   }
 
@@ -80,14 +92,14 @@ const PlayerControls = () => {
     }
   }
 
-  function executeBlockAction(passedNodeId) {
+  function executeBlockAction(inputValues, variables, passedNodeId) {
     const block = nodes.find((node) => node.id === passedNodeId);
     if (!block) {
       throw new Error("Current block is not found!");
     }
 
     if (block.type === "startEndBlock" && block?.data?.label === "Start") {
-      return;
+      return [variables, null];
     }
 
     const blockValue = inputValues[passedNodeId];
@@ -109,6 +121,7 @@ const PlayerControls = () => {
             ...prev,
             [variable]: value ?? null,
           }));
+          variables[variable] = value ?? null;
         });
         break;
       }
@@ -123,6 +136,7 @@ const PlayerControls = () => {
               ...prev,
               [variable]: Number(prev[variable]) + 1,
             }));
+            variables[variable] = Number(variables[variable]) + 1;
             return;
           }
 
@@ -132,6 +146,7 @@ const PlayerControls = () => {
               ...prev,
               [variable]: Number(prev[variable]) - 1,
             }));
+            variables[variable] = Number(variables[variable]) - 1;
             return;
           }
 
@@ -141,6 +156,7 @@ const PlayerControls = () => {
               ...prev,
               [variable]: Number(prev[variable]) + Number(value),
             }));
+            variables[variable] = Number(variables[variable]) + Number(value);
             return;
           }
 
@@ -150,6 +166,7 @@ const PlayerControls = () => {
               ...prev,
               [variable]: Number(prev[variable]) - Number(value),
             }));
+            variables[variable] = Number(variables[variable]) - Number(value);
             return;
           }
 
@@ -159,6 +176,7 @@ const PlayerControls = () => {
               ...prev,
               [variable]: Number(prev[variable]) * Number(value),
             }));
+            variables[variable] = Number(variables[variable]) * Number(value);
             return;
           }
 
@@ -168,11 +186,29 @@ const PlayerControls = () => {
               ...prev,
               [variable]: Number(prev[variable]) / Number(value),
             }));
+            variables[variable] = Number(variables[variable]) / Number(value);
             return;
           }
 
           if (instruction.includes("print")) {
-            return toast(instruction.slice(6), { icon: "📝", duration: 5000 });
+            const words = instruction.slice(6).split(" ");
+
+            const mappedWords = words
+              .map((word) => {
+                if (
+                  word.charAt(0) === "{" &&
+                  word.charAt(word.length - 1) === "}"
+                ) {
+                  return (
+                    variables[word.slice(1, word.length - 1)] ??
+                    word.slice(1, word.length - 1)
+                  );
+                }
+                return word;
+              })
+              .join(" ");
+
+            return toast(mappedWords, { icon: "📝", duration: 5000 });
           }
 
           const [variable, assignment] = instruction.split("=");
@@ -186,8 +222,25 @@ const PlayerControls = () => {
               if (!variableValue) {
                 throw new Error("Variable is not found!");
               }
-              const variableIndex = word.charAt(word.indexOf("[") + 1);
-              return eval(`${variableValue}[${variableIndex}]`);
+              const wordsInBrackets = word
+                .slice(word.indexOf("[") + 1, word.indexOf("]"))
+                .split(" ");
+
+              const mappedWordsInBrackets = wordsInBrackets.map((word) => {
+                return variables[word] ?? word;
+              });
+
+              return eval(`${variableValue}[${mappedWordsInBrackets}]`);
+            }
+
+            if (word.includes(".length")) {
+              const variableName = word.slice(0, word.indexOf("."));
+              const variableValue = variables[variableName];
+              if (!variableValue) {
+                throw new Error("Variable is not found!");
+              }
+
+              return eval(variableValue).length;
             }
 
             return variables[word] ?? word;
@@ -199,6 +252,7 @@ const PlayerControls = () => {
             ...prev,
             [variable.trim()]: value,
           }));
+          variables[variable.trim()] = value;
         });
         break;
       }
@@ -207,7 +261,7 @@ const PlayerControls = () => {
 
         blockInstructions.pop();
         if (blockInstructions.length !== 1) {
-          throw new Error("Decision block should have only one instruction!");
+          throw new Error("Decision block should have one instruction!");
         }
 
         const instruction = blockInstructions[0];
@@ -221,22 +275,40 @@ const PlayerControls = () => {
             if (!variableValue) {
               throw new Error("Variable is not found!");
             }
-            const variableIndex = word.charAt(word.indexOf("[") + 1);
-            return eval(`${variableValue}[${variableIndex}]`);
+            const wordsInBrackets = word
+              .slice(word.indexOf("[") + 1, word.indexOf("]"))
+              .split(" ");
+
+            const mappedWordsInBrackets = wordsInBrackets.map((word) => {
+              return variables[word] ?? word;
+            });
+
+            return eval(`${variableValue}[${mappedWordsInBrackets}]`);
+          }
+
+          if (word.includes(".length")) {
+            const variableName = word.slice(0, word.indexOf("."));
+            const variableValue = variables[variableName];
+            if (!variableValue) {
+              throw new Error("Variable is not found!");
+            }
+
+            return eval(variableValue).length;
           }
 
           return variables[word] ?? word;
         });
 
         const value = eval(mappedWords.join(" "));
-        return value;
+        return [variables, value];
       }
       default:
         throw new Error("Block type is not found!");
     }
+    return [variables, null];
   }
 
-  function proceedToNextStep(passedNodeId) {
+  function proceedToNextStep(inputValues, vars, passedNodeId) {
     try {
       const nodeIdToLookFor = passedNodeId || currentNodeId;
       const currentNode = nodes.find((node) => node.id === nodeIdToLookFor);
@@ -251,7 +323,11 @@ const PlayerControls = () => {
         return stopPlaying();
       }
 
-      const value = executeBlockAction(nodeIdToLookFor);
+      const [variables, value] = executeBlockAction(
+        inputValues,
+        vars,
+        nodeIdToLookFor
+      );
 
       if (currentNode.type === "decisionBlock") {
         let sourceHandle;
@@ -278,7 +354,7 @@ const PlayerControls = () => {
         setCurrentNodeId(nextNode.id);
         if (!isPlayingByStep) {
           setTimeout(() => {
-            proceedToNextStep(nextNode.id);
+            proceedToNextStep(inputValues, variables, nextNode.id);
           }, 1000);
         }
         return;
@@ -298,7 +374,7 @@ const PlayerControls = () => {
 
       if (!isPlayingByStep) {
         setTimeout(() => {
-          proceedToNextStep(nextNode.id);
+          proceedToNextStep(inputValues, variables, nextNode.id);
         }, 1000);
       }
     } catch (e) {
@@ -331,7 +407,7 @@ const PlayerControls = () => {
           </button>
           {isPlayingByStep && (
             <button
-              onClick={() => proceedToNextStep()}
+              onClick={() => proceedToNextStep(inputValues, variables)}
               className="border-[1.5px] text-sm border-black p-1 rounded-lg"
             >
               Next step
@@ -341,7 +417,7 @@ const PlayerControls = () => {
       ) : (
         <>
           <button
-            onClick={play}
+            onClick={() => play(inputValues, variables)}
             className="border-[1.5px] text-sm border-black p-1 rounded-lg"
           >
             Play

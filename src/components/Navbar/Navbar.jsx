@@ -5,6 +5,7 @@ import { MdInfo } from "react-icons/md";
 import SaveProject from "./SaveProject";
 import LoadProject from "./LoadProject";
 import GeneratePDF from "./GeneratePDF";
+import GenerateCode from "./GenerateCode";
 
 const Navbar = () => {
   return (
@@ -33,6 +34,7 @@ const Navbar = () => {
           >
             <SaveProject />
             <LoadProject />
+            <GenerateCode />
             <GeneratePDF />
           </ul>
         </div>
