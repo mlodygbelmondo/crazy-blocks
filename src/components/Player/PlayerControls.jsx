@@ -117,6 +117,22 @@ const PlayerControls = () => {
         blockInstructions.pop();
         blockInstructions.forEach((instruction) => {
           const [variable, value] = instruction.split("=");
+
+          if (value?.includes(".length")) {
+            const variableName = value.slice(0, value.indexOf("."));
+            const variableValue = variables[variableName];
+            if (!variableValue) {
+              throw new Error("Variable is not found!");
+            }
+
+            setVariables((prev) => ({
+              ...prev,
+              [variable]: `${eval(variableValue).length}` ?? null,
+            }));
+            variables[variable] = `${eval(variableValue).length}` ?? null;
+            return;
+          }
+
           setVariables((prev) => ({
             ...prev,
             [variable]: value ?? null,
@@ -216,9 +232,10 @@ const PlayerControls = () => {
           const words = assignment.split(" ");
 
           const mappedWords = words.map((word) => {
-            if (word.includes("[")) {
+            if (word?.includes("[")) {
               const variableName = word.slice(0, word.indexOf("["));
               const variableValue = variables[variableName];
+              console.log(variables);
               if (!variableValue) {
                 throw new Error("Variable is not found!");
               }
@@ -230,23 +247,51 @@ const PlayerControls = () => {
                 return variables[word] ?? word;
               });
 
+              console.log(mappedWordsInBrackets);
+
               return eval(`${variableValue}[${mappedWordsInBrackets}]`);
             }
 
-            if (word.includes(".length")) {
+            if (word?.includes(".length")) {
               const variableName = word.slice(0, word.indexOf("."));
               const variableValue = variables[variableName];
               if (!variableValue) {
                 throw new Error("Variable is not found!");
               }
 
-              return eval(variableValue).length;
+              return `${eval(variableValue).length}`;
             }
 
             return variables[word] ?? word;
           });
 
           const value = eval(mappedWords.join(" "));
+
+          if (variable.trim().includes("[")) {
+            const variableName = variable.slice(0, variable.indexOf("["));
+            const variableValue = variables[variableName];
+            if (!variableValue) {
+              throw new Error("Variable is not found!");
+            }
+            const wordsInBrackets = variable
+              .slice(variable.indexOf("[") + 1, variable.indexOf("]"))
+              .split(" ");
+
+            const mappedWordsInBrackets = wordsInBrackets.map((word) => {
+              return variables[word] ?? word;
+            });
+
+            const newArray = eval(`${variableValue}`);
+
+            newArray[mappedWordsInBrackets] = value;
+
+            setVariables((prev) => ({
+              ...prev,
+              [variableName]: `[${newArray.toString()}]`,
+            }));
+            variables[variableName] = `[${newArray.toString()}]`;
+            return;
+          }
 
           setVariables((prev) => ({
             ...prev,

@@ -4,7 +4,6 @@ import { useCallback } from "react";
 import { Handle, Position } from "reactflow";
 import { getHandleStyles } from "./helpers/getHandleStyles";
 import { BiSolidRightArrow } from "react-icons/bi";
-import { BLOCK_ARROW_STYLES } from "@/consts/block-arrow-styles";
 
 function DataBlock({ data, isConnectable }) {
   const [inputValues, setInputValues] = useAtom(inputValuesAtom);

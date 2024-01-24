@@ -7,7 +7,6 @@ export default async function handler(req, res) {
     .replace(/\+/g, "%2B")
     .replace(/-/g, "%2D")
     .replace(/\*/g, "%2A")
-    .replace(/%/g, "%25")
     .replace(/\//g, "%2F");
 
   const browser = await puppeteer.launch({
@@ -18,9 +17,9 @@ export default async function handler(req, res) {
 
   const website_url = `${process.env.NEXT_PUBLIC_SITE_URL}/?data=${params}`;
 
-  console.log(website_url);
-
   await page.goto(website_url);
+
+  console.log(website_url);
 
   await page.waitForSelector(".react-flow", {
     visible: true,

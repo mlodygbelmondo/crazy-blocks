@@ -18,7 +18,6 @@ const GeneratePDF = () => {
       .replace(/\+/g, "%2B")
       .replace(/-/g, "%2D")
       .replace(/\*/g, "%2A")
-      .replace(/%/g, "%25")
       .replace(/\//g, "%2F");
 
     const res = axios.get(
