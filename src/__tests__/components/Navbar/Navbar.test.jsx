@@ -20,6 +20,6 @@ describe("Navbar", () => {
   });
   it("renders a buttons", () => {
     const infoButton = screen.getAllByRole("button");
-    expect(infoButton).toHaveLength(3);
+    expect(infoButton).toHaveLength(2);
   });
 });
