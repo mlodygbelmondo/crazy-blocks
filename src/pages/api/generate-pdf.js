@@ -19,8 +19,6 @@ export default async function handler(req, res) {
 
   await page.goto(website_url);
 
-  console.log(website_url);
-
   await page.waitForSelector(".react-flow", {
     visible: true,
   });

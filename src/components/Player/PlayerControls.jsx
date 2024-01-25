@@ -6,6 +6,11 @@ import {
   nodesAtom,
   variablesAtom,
 } from "@/atoms/chart";
+import {
+  TbPlayerSkipForwardFilled,
+  TbPlayerStopFilled,
+  TbPlayerPlayFilled,
+} from "react-icons/tb";
 import { useAtom } from "jotai";
 import { useState } from "react";
 import toast from "react-hot-toast";
@@ -19,6 +24,8 @@ const PlayerControls = () => {
   const [inputValues] = useAtom(inputValuesAtom);
   const [currentNodeId, setCurrentNodeId] = useAtom(currentNodeIdAtom);
   const [edges] = useAtom(edgesAtom);
+
+  const [intervalTime, setIntervalTime] = useState(1000);
 
   function play(inputValues, variables) {
     setVariables({});
@@ -62,7 +69,7 @@ const PlayerControls = () => {
 
     setTimeout(() => {
       proceedToNextStep(inputValues, variables, passedNodeId);
-    }, 1000);
+    }, intervalTime);
   }
 
   function playByStep() {
@@ -235,7 +242,6 @@ const PlayerControls = () => {
             if (word?.includes("[")) {
               const variableName = word.slice(0, word.indexOf("["));
               const variableValue = variables[variableName];
-              console.log(variables);
               if (!variableValue) {
                 throw new Error("Variable is not found!");
               }
@@ -246,8 +252,6 @@ const PlayerControls = () => {
               const mappedWordsInBrackets = wordsInBrackets.map((word) => {
                 return variables[word] ?? word;
               });
-
-              console.log(mappedWordsInBrackets);
 
               return eval(`${variableValue}[${mappedWordsInBrackets}]`);
             }
@@ -400,7 +404,7 @@ const PlayerControls = () => {
         if (!isPlayingByStep) {
           setTimeout(() => {
             proceedToNextStep(inputValues, variables, nextNode.id);
-          }, 1000);
+          }, intervalTime);
         }
         return;
       }
@@ -420,7 +424,7 @@ const PlayerControls = () => {
       if (!isPlayingByStep) {
         setTimeout(() => {
           proceedToNextStep(inputValues, variables, nextNode.id);
-        }, 1000);
+        }, intervalTime);
       }
     } catch (e) {
       toast.error(e?.message ?? e);
@@ -441,37 +445,52 @@ const PlayerControls = () => {
   }
 
   return (
-    <div className="absolute right-2 top-2 flex gap-2" id="player-controls">
+    <div
+      className="absolute right-2 top-2 items-center flex gap-2"
+      id="player-controls"
+    >
       {isAppRunning ? (
         <>
           <button
             onClick={stopPlaying}
-            className="border-[1.5px] text-sm border-black p-1 rounded-lg"
+            className="border-[1.5px] shadow-sm shadow-gray-700 text-sm border-black p-1 rounded-full"
           >
-            Stop
+            <TbPlayerStopFilled />
           </button>
           {isPlayingByStep && (
             <button
               onClick={() => proceedToNextStep(inputValues, variables)}
-              className="border-[1.5px] text-sm border-black p-1 rounded-lg"
+              className="border-[1.5px] shadow-sm shadow-gray-700 text-sm border-black p-1 rounded-full"
             >
-              Next step
+              <TbPlayerSkipForwardFilled />
             </button>
           )}
         </>
       ) : (
         <>
+          <div className="flex items-center gap-1">
+            <label htmlFor="step-pause" className="text-xs">
+              Pause {`(ms):`}
+            </label>
+            <input
+              value={intervalTime}
+              onChange={(e) => setIntervalTime(Number(e.target.value))}
+              id="step-pause"
+              type="number"
+              className="rounded-full focus:outline-none text-xs py-0.5 px-1.5 shadow-sm shadow-gray-700 bg-white border-gray-900 border-[1.5px] w-20"
+            />
+          </div>
           <button
             onClick={() => play(inputValues, variables)}
-            className="border-[1.5px] text-sm border-black p-1 rounded-lg"
+            className="border-[1.5px] shadow-sm shadow-gray-700 text-sm border-black p-1 rounded-full"
           >
-            Play
+            <TbPlayerPlayFilled />
           </button>
           <button
             onClick={playByStep}
-            className="border-[1.5px] text-sm border-black p-1 rounded-lg"
+            className="border-[1.5px] shadow-sm shadow-gray-700 text-sm border-black p-1 rounded-full"
           >
-            Play by step
+            <TbPlayerSkipForwardFilled />
           </button>
         </>
       )}

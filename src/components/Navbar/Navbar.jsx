@@ -1,11 +1,11 @@
 import Image from "next/image";
-import { MdKeyboardVoice } from "react-icons/md";
-import { MdInfo } from "react-icons/md";
 
 import SaveProject from "./SaveProject";
 import LoadProject from "./LoadProject";
 import GeneratePDF from "./GeneratePDF";
 import GenerateCode from "./GenerateCode";
+import OpenAlgorithms from "./OpenAlgorithms";
+import Info from "./Info";
 
 const Navbar = () => {
   return (
@@ -36,6 +36,7 @@ const Navbar = () => {
             <LoadProject />
             <GenerateCode />
             <GeneratePDF />
+            <OpenAlgorithms />
           </ul>
         </div>
       </div>
@@ -48,12 +49,7 @@ const Navbar = () => {
         </a>
       </div>
       <div className="navbar-end flex items-center gap-4 text-lg pr-3">
-        <button>
-          <MdInfo className="text-gray-100" />
-        </button>
-        <button>
-          <MdKeyboardVoice className="text-gray-100" />
-        </button>
+        <Info />
       </div>
     </div>
   );
